@@ -1,3 +1,6 @@
 # Ignore video files
 *.mp4
 *.wav
+
+# Project files
+/.vscode
