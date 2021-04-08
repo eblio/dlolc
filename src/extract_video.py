@@ -10,11 +10,11 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 # Constants
-EACH_FRAME = 10
+EACH_FRAME = 5 # A : 10, Y : 5
 TARGET_WIDTH = 600
 TARGET_HEIGHT = 600
 RATIO_WIDTH = 0.5
-RATIO_HEIGHT = 0.0 # top = 0.0, bottom = 1.0 - 0.0
+RATIO_HEIGHT = 0.4 # top = 0.0, bottom = 1.0 - 0.0 | A : 0.0, Y : 0.4
 
 PATH = "../data/%s/"
 EXTENSION = ".bmp"
@@ -50,7 +50,7 @@ def main():
     Process a video file.
     """
 
-    # Get the command lien arguments
+    # Get the command line arguments
     videoFileName = sys.argv[1]
     name = sys.argv[2]
 
