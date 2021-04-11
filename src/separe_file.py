@@ -20,13 +20,17 @@ for i in range(len(champions)) :
 
 
 for champ in champions : 
-    create_dir(path+"/test_"+champ)
-    create_dir(path+"/train_"+champ)
+    create_dir(path+"/validation/validation_"+champ)
+    create_dir(path+"/train/train_"+champ)
 
-if len(os.listdir(path+"/train_"+"teemo")) == 0 : # Just to make sure I use the program only once
-    for i in range(len(champions)) : # Take a fifth of the picture to the test folder and a fifth to the train folder
-        for num_pic in range(len(List_champions_pictures[i])) :
-            if num_pic % 5 == 0 :
-                shutil.move(List_champions_pictures[i][num_pic], path+"/test_"+champions[i] ) 
-            if num_pic % 5 == 1 :
-                shutil.move(List_champions_pictures[i][num_pic], path+"/train_"+champions[i] ) 
+
+
+# It worked, I'm just too scared to execute it again
+
+#if len(os.listdir(path+"/train_"+"teemo")) == 0 : # Just to make sure I use the program only once
+#    for i in range(len(champions)) : # Take a fifth of the picture to the test folder and a fifth to the train folder
+#        for num_pic in range(len(List_champions_pictures[i])) :
+#            if num_pic % 5 == 0 :
+#                shutil.move(List_champions_pictures[i][num_pic], path+"/test_"+champions[i] ) 
+#            if num_pic % 5 == 1 :
+#                shutil.move(List_champions_pictures[i][num_pic], path+"/train_"+champions[i] ) 
