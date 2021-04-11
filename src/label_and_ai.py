@@ -1,3 +1,4 @@
+# %%
 import os
 import shutil
 
@@ -9,6 +10,7 @@ from PIL import Image
 import os, sys
 from scipy.io import loadmat
 
+# %%
 
 def load_data(data_path, classes, dataset='train', image_size=64):
 
@@ -42,17 +44,24 @@ def load_data(data_path, classes, dataset='train', image_size=64):
                 
     return x, y
 
-    labels = ["Chogath", "Ezreal", "Lucian", "Malzahar", "Morgana", "Poppy", "Reksai", "Senna", "Syndra", "Teemo"]
+    
 
-x_train, y_train = load_data(path, labels, dataset='train', image_size=64)
+
+# %%
+
+path = "../data/"
+labels = ["Chogath", "Ezreal", "Lucian", "Malzahar", "Morgana", "Poppy", "Reksai", "Senna", "Syndra", "Teemo"]
+
+x_train, y_train = load_data(path, labels, dataset='train', image_size=600)
 print(x_train.shape, y_train.shape)
 
-x_val, y_val = load_data(path, labels, dataset='validation', image_size=64)
+x_val, y_val = load_data(path, labels, dataset='validation', image_size=600)
 print(x_val.shape, y_val.shape)
 
-x_test, y_test = load_data(path, labels, dataset='test', image_size=64)
+x_test, y_test = load_data(path, labels, dataset='test', image_size=600)
 print(x_test.shape, y_test.shape)
 
+class_num = y_test.shape[1]
 
 plt.figure(figsize=(12, 12))
 shuffle_indices = np.random.permutation(9)
@@ -64,3 +73,47 @@ for i in range(0, 9):
 
 plt.tight_layout()
 plt.show()
+
+# %%
+
+model.add(Conv2D(32, (3, 3), input_shape=(3, 600, 600), activation='relu', padding='same'))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
+
+model.add(Conv2D(64, (3, 3), padding='same'))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
+
+model.add(Conv2D(128, (3, 3), padding='same'))
+model.add(Activation('relu'))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
+
+model.add(Flatten())
+model.add(Dropout(0.2))
+
+model.add(Dense(256, kernel_constraint=maxnorm(3)))
+model.add(Activation('relu'))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
+    
+model.add(Dense(128, kernel_constraint=maxnorm(3)))
+model.add(Activation('relu'))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
+
+model.add(Dense(class_num))
+model.add(Activation('softmax'))
+
+
+epochs = 25
+optimizer = 'adam'
+
+model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+
+print(model.summary())
+
+# %%
+
