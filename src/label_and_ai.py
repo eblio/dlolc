@@ -10,6 +10,12 @@ from PIL import Image
 import os, sys
 from scipy.io import loadmat
 
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten, BatchNormalization, Activation
+from keras.layers.convolutional import Conv2D, MaxPooling2D
+from keras.constraints import maxnorm
+from keras.utils import np_utils
+
 # %%
 
 def load_data(data_path, classes, dataset='train', image_size=64):
@@ -52,29 +58,43 @@ def load_data(data_path, classes, dataset='train', image_size=64):
 path = "../data/"
 labels = ["Chogath", "Ezreal", "Lucian", "Malzahar", "Morgana", "Poppy", "Reksai", "Senna", "Syndra", "Teemo"]
 
-x_train, y_train = load_data(path, labels, dataset='train', image_size=600)
-print(x_train.shape, y_train.shape)
+#x_train, y_train = load_data(path, labels, dataset='train', image_size=600)
+#print(x_train.shape, y_train.shape)
 
-x_val, y_val = load_data(path, labels, dataset='validation', image_size=600)
-print(x_val.shape, y_val.shape)
+#x_val, y_val = load_data(path, labels, dataset='validation', image_size=600)
+#print(x_val.shape, y_val.shape)
 
-x_test, y_test = load_data(path, labels, dataset='test', image_size=600)
-print(x_test.shape, y_test.shape)
+#x_test, y_test = load_data(path, labels, dataset='test', image_size=600)
+#print(x_test.shape, y_test.shape)
 
-class_num = y_test.shape[1]
+#class_num = y_test.shape[1]
 
-plt.figure(figsize=(12, 12))
-shuffle_indices = np.random.permutation(9)
-for i in range(0, 9):
-    plt.subplot(3, 3, i+1)
-    image = x_train[shuffle_indices[i]]
-    plt.title(labels[int(y_train[shuffle_indices[i]])])
-    plt.imshow(image/255)
+#plt.figure(figsize=(12, 12))
+#shuffle_indices = np.random.permutation(9)
+#for i in range(0, 9):
+#    plt.subplot(3, 3, i+1)
+#    image = x_train[shuffle_indices[i]]
+#    plt.title(labels[int(y_train[shuffle_indices[i]])])
+#    plt.imshow(image/255)
 
-plt.tight_layout()
-plt.show()
+#plt.tight_layout()
+#plt.show()
+
+# %% 
+from keras.preprocessing.image import ImageDataGenerator
+datagen = ImageDataGenerator()
+
+# load and iterate training dataset
+train_it = datagen.flow_from_directory('../data/train/', class_mode='sparse', batch_size=64)
+# load and iterate validation dataset
+val_it = datagen.flow_from_directory('../data/validation/', class_mode='sparse', batch_size=64)
+# load and iterate test dataset
+test_it = datagen.flow_from_directory('../data/test/', class_mode='sparse', batch_size=64)
+
+
 
 # %%
+model = Sequential()
 
 model.add(Conv2D(32, (3, 3), input_shape=(3, 600, 600), activation='relu', padding='same'))
 model.add(Dropout(0.2))
@@ -104,11 +124,10 @@ model.add(Activation('relu'))
 model.add(Dropout(0.2))
 model.add(BatchNormalization())
 
-model.add(Dense(class_num))
+model.add(Dense(len(labels)))
 model.add(Activation('softmax'))
 
 
-epochs = 25
 optimizer = 'adam'
 
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
@@ -116,4 +135,16 @@ model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['ac
 print(model.summary())
 
 # %%
+step_size_train = train_it.n//train_it.batch_size
+step_size_valid = val_it.n//val_it.batch_size
 
+model.fit_generator(generator=train_it,
+                   steps_per_epoch = step_size_train,
+                   epochs = 10,
+                   verbose = 1,
+                   validation_data = val_it,
+                   validation_steps = step_size_valid)
+
+# %%
+scores = model.evaluate(X_test, y_test, verbose=0)
+print("Accuracy: %.2f%%" % (scores[1]*100))
