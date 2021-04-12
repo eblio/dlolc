@@ -96,7 +96,14 @@ test_it = datagen.flow_from_directory('../data/test/', class_mode='sparse', batc
 # %%
 model = Sequential()
 
-model.add(Conv2D(32, (3, 3), input_shape=(3, 600, 600), activation='relu', padding='same'))
+model.add(Conv2D(32, (3, 3), input_shape=(600,600,3), padding='same'))
+model.add(Activation('relu'))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
+
+model.add(Conv2D(64, (3, 3), padding='same'))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.2))
 model.add(BatchNormalization())
 
@@ -118,13 +125,11 @@ model.add(Dense(256, kernel_constraint=maxnorm(3)))
 model.add(Activation('relu'))
 model.add(Dropout(0.2))
 model.add(BatchNormalization())
-    
 model.add(Dense(128, kernel_constraint=maxnorm(3)))
 model.add(Activation('relu'))
 model.add(Dropout(0.2))
 model.add(BatchNormalization())
-
-model.add(Dense(len(labels)))
+model.add(Dense(num_classes))
 model.add(Activation('softmax'))
 
 
