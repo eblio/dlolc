@@ -10,13 +10,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 # Constants
-EACH_FRAME = 5 # A : 10, Y : 5
-TARGET_WIDTH = 600
-TARGET_HEIGHT = 600
+EACH_FRAME = 10 # A : 10, Y : 5
+TARGET_WIDTH = 400
+TARGET_HEIGHT = 400
 RATIO_WIDTH = 0.5
-RATIO_HEIGHT = 0.4 # top = 0.0, bottom = 1.0 - 0.0 | A : 0.0, Y : 0.4
+RATIO_HEIGHT = 0.5 # top = 0.0, bottom = 1.0 - 0.0 | A : 0.0, Y : 0.4
 
-PATH = "../data/%s/"
+PATH = "D:/Documents/cours/2A/pm-ap/ap/projet/dlolc/data/validation2/%s/"
 EXTENSION = ".bmp"
 FILENAME = PATH + "%s_%d_%dx%d" + EXTENSION
 
